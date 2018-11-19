@@ -9,30 +9,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
 import org.springframework.stereotype.Component;
 
-import javax.mail.MessagingException;
-import java.io.UnsupportedEncodingException;
 import java.util.function.Function;
 
-git@Component("queueInfoFunction")
+@Component("queueInfoFunction")
 public class QueueInfoFunction implements Function<LexRequest, LexResponse> {
-
-    @Autowired
-    EmailService emailService;
 
     @Autowired
     QueueMessagingTemplate queueMessagingTemplate;
 
+    public static final String EMAIL_DESTINATION = "https://sqs.us-east-1.amazonaws.com/963929482176/parrot_queue";
+
     public LexResponse apply(LexRequest lexRequest) {
         String email = lexRequest.getInputTranscript();
 
+        EmailRequest emailRequest = getEmailRequest(email);
+
+        queueMessagingTemplate.convertAndSend(EMAIL_DESTINATION, emailRequest);
+
+        return message("You entered " + email);
+    }
+
+    EmailRequest getEmailRequest(String email) {
         EmailRequest emailRequest = new EmailRequest();
         emailRequest.setTo(email != null ? email : "krishnaha@gmail.com");
         emailRequest.setBody("Woeful");
         emailRequest.setSubject("parrot subject");
-
-        queueMessagingTemplate.convertAndSend("https://sqs.us-east-1.amazonaws.com/963929482176/parrot_queue", emailRequest);
-
-        return message("You entered " + email);
+        return emailRequest;
     }
 
     private LexResponse message(String msg) {
