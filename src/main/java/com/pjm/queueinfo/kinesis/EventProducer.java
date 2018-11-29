@@ -16,25 +16,43 @@ import java.util.List;
 @Component
 public class EventProducer {
 
-    public void produce(String streamName, String regionName, EmailRequest emailRequest) {
-        AmazonKinesis producer = ProducerUtils.getKinesisProducer(regionName);
+    public void produce( EmailRequest emailRequest) {
+        AmazonKinesis producer = ProducerUtils.getKinesisProducer("us-east-1");
 
         System.out.println("Creating " + ProducerConfig.RECORDS_TO_TRANSMIT + " records...");
         List<PutRecordsRequestEntry> entries = new LinkedList<>();
         for (int i = 1; i <= ProducerConfig.RECORDS_TO_TRANSMIT; i++) {
-            byte[] data = ProducerUtils.emailPayload(emailRequest);
+            byte[] data = ProducerUtils.jsonPayload(emailRequest);
             entries.add(new PutRecordsRequestEntry()
                     .withPartitionKey(ProducerUtils.randomPartitionKey())
                     .withExplicitHashKey(ProducerUtils.randomExplicitHashKey())
                     .withData(ByteBuffer.wrap(data)));
         }
 
-        PutRecordsRequest request = new PutRecordsRequest().withRecords(entries).withStreamName(streamName);
+        PutRecordsRequest request = new PutRecordsRequest().withRecords(entries).withStreamName("parrotstream");
 
         System.out.println("Sending " + ProducerConfig.RECORDS_TO_TRANSMIT + " records...");
         producer.putRecords(request);
         System.out.println("Complete.");
     }
 
+    public void produce(Object request, String stream) {
+        AmazonKinesis producer = ProducerUtils.getKinesisProducer("us-east-1");
 
+        System.out.println("Creating " + ProducerConfig.RECORDS_TO_TRANSMIT + " records...");
+        List<PutRecordsRequestEntry> entries = new LinkedList<>();
+        for (int i = 1; i <= ProducerConfig.RECORDS_TO_TRANSMIT; i++) {
+            byte[] data = ProducerUtils.jsonPayload(request);
+            entries.add(new PutRecordsRequestEntry()
+                    .withPartitionKey(ProducerUtils.randomPartitionKey())
+                    .withExplicitHashKey(ProducerUtils.randomExplicitHashKey())
+                    .withData(ByteBuffer.wrap(data)));
+        }
+
+        PutRecordsRequest recordsRequest = new PutRecordsRequest().withRecords(entries).withStreamName(stream);
+
+        System.out.println("Sending " + ProducerConfig.RECORDS_TO_TRANSMIT + " records...");
+        producer.putRecords(recordsRequest);
+        System.out.println("Complete.");
+    }
 }

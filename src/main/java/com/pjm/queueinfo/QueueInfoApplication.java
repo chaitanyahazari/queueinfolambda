@@ -11,21 +11,6 @@ public class QueueInfoApplication {
 
     }
 
-//    @Bean
-//    public QueueMessagingTemplate queueMessagingTemplate() {
-//        return new QueueMessagingTemplate(amazonSQSClient());
-//    }
-
-//    @Lazy
-//    @Bean(name = "amazonSQS", destroyMethod = "shutdown")
-//    public AmazonSQSAsync amazonSQSClient() {
-//        AmazonSQSAsyncClient awsSQSAsyncClient = new AmazonSQSAsyncClient(new DefaultAWSCredentialsProviderChain());
-//        awsSQSAsyncClient.setEndpoint("sqs.us-east-1.amazonaws.com");
-//        awsSQSAsyncClient.setRegion(Region.getRegion(Regions.fromName("us-east-1")));
-//        return awsSQSAsyncClient;
-//    }
-
-
 }
 
 

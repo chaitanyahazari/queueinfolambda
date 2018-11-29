@@ -66,7 +66,7 @@ public class ProducerUtils {
         return sb.toString().getBytes(StandardCharsets.UTF_8);
     }
 
-    public static byte[] emailPayload(EmailRequest emailRequest) {
+    public static byte[] jsonPayload(Object emailRequest) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
         try {
